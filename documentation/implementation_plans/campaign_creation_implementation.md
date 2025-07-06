@@ -34,10 +34,10 @@ interface Campaign {
 - [x] Set up database connection
 
 ### 4. Implement Campaign Repository
-- [ ] Create Campaign entity class
-- [ ] Implement repository pattern
-- [ ] Add create method
-- [ ] Add input validation
+- [x] Create Campaign entity class
+- [x] Implement repository pattern
+- [x] Add create method
+- [x] Add input validation
 
 ### 5. Create Campaign Service
 - [ ] Implement business logic
