@@ -7,6 +7,9 @@
  * know about the underlying implementation (e.g., database errors).
  */
 export class ServiceError extends Error {
+  // This property is the reliable way to identify this error type.
+  public readonly isServiceError = true;
+
   constructor(message: string) {
     super(message);
     this.name = 'ServiceError';
