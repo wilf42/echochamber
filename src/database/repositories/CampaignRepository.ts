@@ -1,13 +1,16 @@
 // src/database/repositories/CampaignRepository.ts
 import { Repository } from 'typeorm';
 import { Campaign } from '../entities/Campaign';
-import { validate } from 'class-validator';
+// The 'validate' import is no longer needed here.
 import { IsNotEmpty, IsString, MaxLength } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 /**
- * A Data Transfer Object (DTO) for creating a campaign, now with validation rules.
+ * A Data Transfer Object (DTO) for creating a campaign.
+ * The validation rules are still defined here, but they are enforced by the Service.
  */
 export class CreateCampaignDto {
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
   @IsString()
   @IsNotEmpty({ message: 'Campaign name cannot be empty.' })
   @MaxLength(255, {
@@ -27,31 +30,15 @@ export class CampaignRepository {
   }
 
   /**
-   * Creates a new campaign record in the database after validating the input.
+   * Creates a new campaign record in the database.
+   * Assumes the input data has already been validated by the service layer.
    * @param campaignData - The data for the new campaign.
    * @returns The newly created and saved Campaign entity.
-   * @throws An error if validation fails.
    */
   public async create(campaignData: CreateCampaignDto): Promise<Campaign> {
-    // Create an instance of the DTO class to apply decorators
-    const campaignDto = new CreateCampaignDto();
-    campaignDto.name = campaignData.name;
-    campaignDto.description = campaignData.description;
-
-    // Validate the DTO instance against the decorators
-    const errors = await validate(campaignDto);
-    if (errors.length > 0) {
-      // Consolidate all validation error messages into a single error.
-      const messages = errors
-        .map((err) => Object.values(err.constraints!))
-        .flat();
-      throw new Error(`Validation failed: ${messages.join(', ')}`);
-    }
-
-    // If validation passes, proceed with creating and saving
-    const newCampaign = this.typeormRepo.create(campaignDto);
+    // The validation logic has been removed. We now trust the service.
+    const newCampaign = this.typeormRepo.create(campaignData);
     await this.typeormRepo.save(newCampaign);
-
     return newCampaign;
   }
 }
